@@ -34,7 +34,7 @@ const AppHeader = () => {
             onClick={onClickSideNavExpand}
             isActive={isSideNavExpanded}
           />
-          <HeaderName>
+          <HeaderName prefix="">
             <Link href="/">My App Name</Link>
           </HeaderName>
           <HeaderNavigation aria-label="Header Nav">

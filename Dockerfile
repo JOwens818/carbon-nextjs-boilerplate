@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM registry.cirrus.ibm.com/public/nodejs-16 AS deps
+FROM node:16 AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./ 
 USER root
@@ -7,7 +7,7 @@ RUN npm install
 USER 1001
 
 # Builder
-FROM registry.cirrus.ibm.com/public/nodejs-16 AS builder
+FROM node:16 AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -17,7 +17,7 @@ RUN npm run build
 USER 1001
 
 # Runner
-FROM registry.cirrus.ibm.com/public/nodejs-16 AS runner
+FROM node:16 AS runner
 WORKDIR /app
 ENV NODE_ENV cirrus
 ENV NEXT_TELEMETRY_DISABLED 1
@@ -28,7 +28,7 @@ COPY --from=builder --chown=1001:0 /app/.next/standalone ./
 COPY --from=builder --chown=1001:0 /app/.next/static ./.next/static
 
 USER root
-RUN dnf update --nobest -y
+RUN apt-get update -q -y && apt-get upgrade -q -y
 EXPOSE 3030
 ENV PORT 3030
 
